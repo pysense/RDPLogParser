@@ -1,0 +1,19 @@
+:::: 编写 CMD 命令需要以 :: 开头，注释以 :::: 开头
+:::: LogDir 变量为选择的日志文件目录
+:: set logname=Microsoft-Windows-TerminalServices-LocalSessionManager%4Operational.evtx
+:: xcopy /y %LogDir%\%logname% %tmp% > nul
+:: pushd %tmp%
+LogParser.exe -stats:ON -i:EVT -o:DATAGRID "
+    SELECT
+        TimeGenerated,
+        ComputerName AS Computer,
+        EXTRACT_TOKEN(Strings, 0, '|') AS User,
+        EXTRACT_TOKEN(Strings, 1, '|') AS SessionID,
+        EXTRACT_TOKEN(Strings, 2, '|') AS Address,
+        EventID
+    FROM '%logname%'
+    WHERE
+        EventID IN (21;22)
+    "
+:: del /f/q %logname% 2> nul
+:: popd

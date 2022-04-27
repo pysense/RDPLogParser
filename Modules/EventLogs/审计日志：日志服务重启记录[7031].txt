@@ -1,0 +1,12 @@
+LogParser.exe -stats:ON -i:EVT -o:DATAGRID "
+    SELECT
+        TimeGenerated,
+        ComputerName,
+        EXTRACT_TOKEN(Strings, 0, '|') AS Param1,
+        EXTRACT_TOKEN(Strings, 4, '|') AS Param5,
+        EventID
+    FROM System
+    WHERE
+        EventID IN (7031) AND
+        Param1 LIKE 'Windows Event Log' -- 7031 为重新启动服务，需指定需要查询的关键字
+    "

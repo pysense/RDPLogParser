@@ -1,0 +1,10 @@
+LogParser.exe -stats:ON -i:EVT -o:DATAGRID "
+    SELECT
+        TimeGenerated,
+        EXTRACT_TOKEN(Strings, 1, '|') AS SubjectUserName,
+        EXTRACT_TOKEN(Strings, 2, '|') AS SubjectDomainName,
+        EventID
+    FROM Security
+    WHERE
+        EventID = 1102
+    "

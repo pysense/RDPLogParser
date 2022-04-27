@@ -1,0 +1,14 @@
+LogParser.exe -stats:ON -i:EVT -o:DATAGRID "
+    SELECT
+        COUNT(*) AS Total,
+        EXTRACT_TOKEN(Strings, 10, '|') AS LogonType,
+        EXTRACT_TOKEN(Strings, 19, '|') AS IpAddress,
+        EventID
+    FROM Security
+    WHERE
+        EventID = 4625 AND
+        LogonType LIKE '3' AND
+        IpAddress NOT LIKE '-'
+    GROUP BY IpAddress,LogonType,EventID
+    ORDER BY Total DESC
+    "

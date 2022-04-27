@@ -1,0 +1,19 @@
+:::: 编写 CMD 命令需要以 :: 开头，注释以 :::: 开头
+:::: LogDir 变量为选择的日志文件目录
+:: set logname=Microsoft-Windows-RemoteDesktopServices-RdpCoreTS%4Operational.evtx
+:: xcopy /y %LogDir%\%logname% %tmp% > nul
+:: pushd %tmp%
+LogParser.exe -stats:ON -i:EVT -o:DATAGRID "
+    SELECT
+        COUNT(*) AS Total,
+        EXTRACT_TOKEN(EXTRACT_TOKEN(Strings, 1, '|'), 0, ':') AS IpAddress,
+        EventID
+    FROM '%logname%'
+    WHERE
+        EventID = 131 AND
+        Strings LIKE 'TCP%'
+    GROUP BY IpAddress,EventID
+    ORDER BY Total DESC
+    "
+:: del /f/q %logname% 2> nul
+:: popd

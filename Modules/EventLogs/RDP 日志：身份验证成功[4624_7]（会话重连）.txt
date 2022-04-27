@@ -1,0 +1,17 @@
+LogParser.exe -stats:ON -i:EVT -o:DATAGRID "
+    SELECT
+        TimeGenerated,
+        EXTRACT_TOKEN(Strings, 5, '|') AS TargetUserName,
+        EXTRACT_TOKEN(Strings, 6, '|') AS TargetDomainName,
+        EXTRACT_TOKEN(Strings, 8, '|') AS LogonType,
+        EXTRACT_TOKEN(Strings, 9, '|') AS LogonProcessName,
+        EXTRACT_TOKEN(strings, 10, '|') AS AuthenticationPackageName,
+        EXTRACT_TOKEN(Strings, 11, '|') AS WorkstationName,
+        EXTRACT_TOKEN(Strings, 17, '|') AS ProcessName,
+        EXTRACT_TOKEN(Strings, 18, '|') AS IpAddress,
+        EventID
+    FROM Security
+    WHERE
+        EventID = 4624 AND
+        LogonType LIKE '7'
+    "
