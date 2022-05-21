@@ -3,7 +3,7 @@
 #KeyHistory 0       ; 禁用鼠标及键盘击键历史
 
 ; 更新环境变量
-binPATH = %A_ScriptDir%;%A_ScriptDir%\bin
+binPATH = %A_ScriptDir%;%A_ScriptDir%\bin;%A_ScriptDir%\..\NirSoftSuite\FullEventLogView_x64_sps;%A_ScriptDir%\..\..\Console\Log Parser 2.2
 EnvGet, PATH, PATH
 If PATH Not Contains %binPATH%
     EnvSet, PATH, %binPATH%;%PATH%
@@ -23,11 +23,13 @@ If Not (A_IsAdmin or RegExMatch(full_command_line, " /restart(?!\S)"))
 }
 
 ; 运行前检查：2）依赖文件 LogParser 是否存在
-IfNotExist, %A_ScriptDir%\bin\LogParser.exe
-{
-    MsgBox, 缺少依赖文件 bin\LogParser.exe，程序退出。
-    ExitApp
-}
+DepCommand = LogParser.exe|FullEventLogView.exe
+Loop, Parse, DepCommand, |
+    If Not CheckCommand(A_LoopField)
+    {
+        MsgBox, 缺少依赖文件 %A_LoopField%，程序退出。
+        ExitApp
+    }
 
 ; 程序设置
 Author = 1057
@@ -908,6 +910,16 @@ Return
 ; 通用函数
 ;
 ; ------------------------------------------------------------------------------
+; 检查依赖命令
+CheckCommand(str) {
+    global binPATH
+    Loop, Parse, binPATH, `;
+    {
+        IfExist, %A_LoopField%\%str%
+            Return, 1
+    }
+}
+
 ; 执行 CMD 命令，支持执行多行命令，所有命令执行结束后返回执行结果（有弹出 CMD 窗口）
 RunWaitCmdOutput(cmd) {
     global RunWaitCmdPID =
