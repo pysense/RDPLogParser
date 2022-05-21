@@ -1,0 +1,17 @@
+:::: 编写 CMD 命令需要以 :: 开头，注释以 :::: 开头
+:::: LogDir 变量为选择的日志文件目录
+:: pushd %tmp%
+:: FullEventLogView.exe /ChannelFilter 2 /ChannelFilterStr "Microsoft-Windows-TerminalServices-LocalSessionManager/Operational" /EventIDFilter 2 /EventIDFilterStr "21,22" /scomma 1.csv
+LogParser.exe -stats:ON -i:CSV -o:DATAGRID "
+    SELECT
+        [Event Time] AS TimeGenerated,
+        Computer,
+        EXTRACT_TOKEN(EXTRACT_TOKEN(Description, 3, ':'), 0, '会话') AS User,
+        EXTRACT_TOKEN(Description, 4, ': ') AS Address,
+        [Event ID] AS EventID
+    FROM 1.csv
+    WHERE
+        EventID IN (21;22)
+    "
+:: del /f/q 1.csv 2> nul
+:: popd
