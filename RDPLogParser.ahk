@@ -66,6 +66,7 @@ Gui, Add, Button, gDetectBruteForce vDetectBruteForce Section xs, 远程登录�
 
 Gui, Tab, 辅助工具
 Gui, Add, Button, gRegeditLocate Section xm+10 ym+35, 注册表跳转
+Gui, Add, Button, gRunFullEventLogView xs, FullEventLogView
 
 Gui, Tab, 关于
 Gui, Add, Edit, Multi ReadOnly r13 w575, %About%
@@ -840,6 +841,20 @@ Return
 ; ------------------------------------------------------------------------------
 ;
 ; RegeditLocate END
+;
+; ------------------------------------------------------------------------------
+
+; ------------------------------------------------------------------------------
+;
+; RunFullEventLogView BEGIN
+;
+; ------------------------------------------------------------------------------
+RunFullEventLogView:
+Run, bin\FullEventLogView.exe
+Return
+; ------------------------------------------------------------------------------
+;
+; RunFullEventLogView END
 ;
 ; ------------------------------------------------------------------------------
 
