@@ -22,7 +22,7 @@ If Not (A_IsAdmin or RegExMatch(full_command_line, " /restart(?!\S)"))
     ExitApp
 }
 
-; 运行前检查：2）依赖文件 LogParser 是否存在
+; 运行前检查：2）依赖文件是否存在
 DepCommand = LogParser.exe|FullEventLogView.exe
 Loop, Parse, DepCommand, |
     If Not CheckCommand(A_LoopField)
@@ -1054,7 +1054,7 @@ queryTermServiceListeningPort() {
     @echo off
     pushd %~dp0
     for /f "tokens=2" %%i in ('tasklist /FI "SERVICES eq TermService" /NH ^| find "svchost.exe"') do set PID=%%i
-    for /f "tokens=2 delims=:" %%j in ('netstat -ano ^| find "LISTENING" ^| find "%PID%" ^| find /v "::"') do ^
+    for /f "tokens=2 delims=:" %%j in ('netstat -ano ^| findstr "LISTENING.*%PID%" ^| findstr /v "::"') do ^
     for /f "tokens=1" %%k in ("%%j") do set PORT=%%k
     set/p=%PORT%<nul
     del %0
