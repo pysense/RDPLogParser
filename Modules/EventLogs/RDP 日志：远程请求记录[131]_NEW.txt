@@ -1,0 +1,18 @@
+:::: EventID 131：RDP 建立连接，包含登录成功与登录失败的请求记录
+:::: 编写 CMD 命令需要以 :: 开头，注释以 :::: 开头
+:::: LogDir 变量为选择的日志文件目录
+:: pushd %tmp%
+:: FullEventLogView.exe /ChannelFilter 2 /ChannelFilterStr "Microsoft-Windows-RemoteDesktopServices-RdpCoreTS/Operational" /EventIDFilter 2 /EventIDFilterStr "131" /scomma 1.csv
+LogParser.exe -stats:ON -i:CSV -o:DATAGRID "
+    SELECT
+        [Event Time] AS TimeGenerated,
+        Computer,
+        EXTRACT_TOKEN(EXTRACT_TOKEN(Description, 1, ' '), 0, ':') AS IpAddress,
+        EXTRACT_TOKEN(EXTRACT_TOKEN(Description, 1, ' '), 1, ':') AS IpPort,
+        [Event ID] AS EventID
+    FROM 1.csv
+    WHERE
+        EventID = 131
+    "
+:: del /f/q 1.csv 2> nul
+:: popd
